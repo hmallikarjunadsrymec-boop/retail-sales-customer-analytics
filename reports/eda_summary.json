@@ -1,0 +1,291 @@
+{
+    "kpis": {
+        "total_revenue": 10009302.93,
+        "total_orders": 19774,
+        "total_customers": 4333,
+        "total_items_sold": 5406349,
+        "average_order_value": 506.19
+    },
+    "monthly_summary": [
+        {
+            "YearMonth": "2010-12",
+            "Revenue": 776314.95,
+            "Orders": 1551,
+            "Customers": 884,
+            "MoM_Growth_Pct": NaN
+        },
+        {
+            "YearMonth": "2011-01",
+            "Revenue": 593455.86,
+            "Orders": 1080,
+            "Customers": 738,
+            "MoM_Growth_Pct": -23.55475570836295
+        },
+        {
+            "YearMonth": "2011-02",
+            "Revenue": 508081.54,
+            "Orders": 1093,
+            "Customers": 757,
+            "MoM_Growth_Pct": -14.385959555610416
+        },
+        {
+            "YearMonth": "2011-03",
+            "Revenue": 690591.84,
+            "Orders": 1440,
+            "Customers": 973,
+            "MoM_Growth_Pct": 35.92145859107576
+        },
+        {
+            "YearMonth": "2011-04",
+            "Revenue": 515869.66,
+            "Orders": 1235,
+            "Customers": 853,
+            "MoM_Growth_Pct": -25.300353968850832
+        },
+        {
+            "YearMonth": "2011-05",
+            "Revenue": 740472.33,
+            "Orders": 1668,
+            "Customers": 1054,
+            "MoM_Growth_Pct": 43.53864695202272
+        },
+        {
+            "YearMonth": "2011-06",
+            "Revenue": 738233.99,
+            "Orders": 1525,
+            "Customers": 990,
+            "MoM_Growth_Pct": -0.30228543448747036
+        },
+        {
+            "YearMonth": "2011-07",
+            "Revenue": 688802.67,
+            "Orders": 1452,
+            "Customers": 946,
+            "MoM_Growth_Pct": -6.695887844448878
+        },
+        {
+            "YearMonth": "2011-08",
+            "Revenue": 724708.16,
+            "Orders": 1340,
+            "Customers": 933,
+            "MoM_Growth_Pct": 5.212739666064303
+        },
+        {
+            "YearMonth": "2011-09",
+            "Revenue": 1029245.38,
+            "Orders": 1819,
+            "Customers": 1259,
+            "MoM_Growth_Pct": 42.02204926187114
+        },
+        {
+            "YearMonth": "2011-10",
+            "Revenue": 1104030.92,
+            "Orders": 2005,
+            "Customers": 1361,
+            "MoM_Growth_Pct": 7.266055447341424
+        },
+        {
+            "YearMonth": "2011-11",
+            "Revenue": 1453265.98,
+            "Orders": 2751,
+            "Customers": 1660,
+            "MoM_Growth_Pct": 31.632724561736005
+        },
+        {
+            "YearMonth": "2011-12",
+            "Revenue": 446229.65,
+            "Orders": 815,
+            "Customers": 613,
+            "MoM_Growth_Pct": -69.29470199254234
+        }
+    ],
+    "top_revenue_products": [
+        {
+            "StockCode": "22423",
+            "Description": "REGENCY CAKESTAND 3 TIER",
+            "Revenue": 174156.54
+        },
+        {
+            "StockCode": "85123A",
+            "Description": "WHITE HANGING HEART T-LIGHT HOLDER",
+            "Revenue": 106236.72
+        },
+        {
+            "StockCode": "47566",
+            "Description": "PARTY BUNTING",
+            "Revenue": 99445.23
+        },
+        {
+            "StockCode": "85099B",
+            "Description": "JUMBO BAG RED RETROSPOT",
+            "Revenue": 94159.81
+        },
+        {
+            "StockCode": "23084",
+            "Description": "RABBIT NIGHT LIGHT",
+            "Revenue": 66870.03
+        },
+        {
+            "StockCode": "22086",
+            "Description": "PAPER CHAIN KIT 50'S CHRISTMAS",
+            "Revenue": 64875.59
+        },
+        {
+            "StockCode": "84879",
+            "Description": "ASSORTED COLOUR BIRD ORNAMENT",
+            "Revenue": 58927.62
+        },
+        {
+            "StockCode": "79321",
+            "Description": "CHILLI LIGHTS",
+            "Revenue": 54096.36
+        },
+        {
+            "StockCode": "23298",
+            "Description": "SPOTTY BUNTING",
+            "Revenue": 42513.479999999996
+        },
+        {
+            "StockCode": "22386",
+            "Description": "JUMBO BAG PINK POLKADOT",
+            "Revenue": 42401.01
+        }
+    ],
+    "category_performance": [
+        {
+            "Category": "Home Decor",
+            "Revenue": 3052557.9,
+            "Units_Sold": 1523439,
+            "Orders": 16591,
+            "Revenue_Share_Pct": 30.5
+        },
+        {
+            "Category": "General Merchandise",
+            "Revenue": 2360238.17,
+            "Units_Sold": 1290370,
+            "Orders": 16192,
+            "Revenue_Share_Pct": 23.58
+        },
+        {
+            "Category": "Kitchen & Dining",
+            "Revenue": 2215864.76,
+            "Units_Sold": 985491,
+            "Orders": 14899,
+            "Revenue_Share_Pct": 22.14
+        },
+        {
+            "Category": "Bags & Luggage",
+            "Revenue": 1174502.04,
+            "Units_Sold": 659060,
+            "Orders": 9701,
+            "Revenue_Share_Pct": 11.73
+        },
+        {
+            "Category": "Stationery & Craft",
+            "Revenue": 474610.31,
+            "Units_Sold": 514468,
+            "Orders": 9602,
+            "Revenue_Share_Pct": 4.74
+        },
+        {
+            "Category": "Toys & Games",
+            "Revenue": 321279.27,
+            "Units_Sold": 132858,
+            "Orders": 6807,
+            "Revenue_Share_Pct": 3.21
+        },
+        {
+            "Category": "Seasonal & Holiday",
+            "Revenue": 313996.01,
+            "Units_Sold": 240046,
+            "Orders": 5629,
+            "Revenue_Share_Pct": 3.14
+        },
+        {
+            "Category": "Jewelry & Accessories",
+            "Revenue": 96254.47,
+            "Units_Sold": 60617,
+            "Orders": 3504,
+            "Revenue_Share_Pct": 0.96
+        }
+    ],
+    "top_countries": [
+        {
+            "Country": "United Kingdom",
+            "Revenue": 8480951.28,
+            "Orders": 17899,
+            "Customers": 3915,
+            "Rev_Share_Pct": 84.73
+        },
+        {
+            "Country": "Netherlands",
+            "Revenue": 283889.34,
+            "Orders": 93,
+            "Customers": 9,
+            "Rev_Share_Pct": 2.84
+        },
+        {
+            "Country": "EIRE",
+            "Revenue": 276090.86,
+            "Orders": 284,
+            "Customers": 3,
+            "Rev_Share_Pct": 2.76
+        },
+        {
+            "Country": "Germany",
+            "Revenue": 205381.15,
+            "Orders": 443,
+            "Customers": 94,
+            "Rev_Share_Pct": 2.05
+        },
+        {
+            "Country": "France",
+            "Revenue": 184679.0,
+            "Orders": 383,
+            "Customers": 87,
+            "Rev_Share_Pct": 1.85
+        },
+        {
+            "Country": "Australia",
+            "Revenue": 138103.81,
+            "Orders": 56,
+            "Customers": 9,
+            "Rev_Share_Pct": 1.38
+        },
+        {
+            "Country": "Spain",
+            "Revenue": 55706.56,
+            "Orders": 88,
+            "Customers": 30,
+            "Rev_Share_Pct": 0.56
+        },
+        {
+            "Country": "Switzerland",
+            "Revenue": 53065.6,
+            "Orders": 50,
+            "Customers": 21,
+            "Rev_Share_Pct": 0.53
+        },
+        {
+            "Country": "Japan",
+            "Revenue": 37416.37,
+            "Orders": 19,
+            "Customers": 8,
+            "Rev_Share_Pct": 0.37
+        },
+        {
+            "Country": "Belgium",
+            "Revenue": 36927.34,
+            "Orders": 98,
+            "Customers": 25,
+            "Rev_Share_Pct": 0.37
+        }
+    ],
+    "repeat_behavior": {
+        "one_time_buyers": 1505,
+        "repeat_buyers": 2828,
+        "repeat_rate_pct": 65.27,
+        "avg_orders_per_customer": 4.25,
+        "max_orders_single_customer": 206
+    }
+}

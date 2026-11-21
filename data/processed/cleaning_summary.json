@@ -1,0 +1,17 @@
+{
+    "initial_raw_records": 541909,
+    "duplicate_rows_removed": 5268,
+    "cancellations_and_returns": 10587,
+    "invalid_price_or_zero_qty_removed": 3347,
+    "extreme_outliers_dropped": 2,
+    "final_cleaned_records": 522707,
+    "retention_rate_pct": 96.46,
+    "total_revenue": 10009302.93,
+    "unique_invoices": 19774,
+    "unique_customers": 4333,
+    "unique_products": 3803,
+    "unique_countries": 38,
+    "date_range_start": "2010-12-01 08:26:00",
+    "date_range_end": "2011-12-09 12:50:00",
+    "average_order_value": 506.19
+}

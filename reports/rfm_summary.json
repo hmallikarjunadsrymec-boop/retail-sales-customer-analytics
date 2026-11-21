@@ -1,0 +1,125 @@
+{
+    "total_segmented_customers": 4333,
+    "total_customer_revenue": 8498260.44,
+    "median_recency_days": 51.0,
+    "median_frequency": 2.0,
+    "median_monetary": 661.52,
+    "kmeans_evaluation": {
+        "k_range": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "inertias": [
+            6467.61,
+            4849.9,
+            3922.33,
+            3278.59,
+            2836.52,
+            2533.57,
+            2325.41
+        ],
+        "silhouette_scores": [
+            0.433,
+            0.3378,
+            0.3382,
+            0.3162,
+            0.3134,
+            0.3093,
+            0.2878
+        ],
+        "selected_k": 4,
+        "selected_k_silhouette": 0.3382,
+        "cluster_name_map": {
+            "0": "High-Value VIPs",
+            "3": "Active Core Regulars",
+            "2": "Recent Casual Buyers",
+            "1": "Dormant / Lost Shoppers"
+        },
+        "cluster_profiles": [
+            {
+                "KMeans_Cluster": 0,
+                "Count": 685,
+                "Mean_Recency": 11.83941605839416,
+                "Mean_Frequency": 13.964963503649635,
+                "Mean_Monetary": 7942.163956204379,
+                "Total_Revenue": 5440382.31
+            },
+            {
+                "KMeans_Cluster": 3,
+                "Count": 1180,
+                "Mean_Recency": 67.43559322033899,
+                "Mean_Frequency": 4.161016949152542,
+                "Mean_Monetary": 1730.0441186440678,
+                "Total_Revenue": 2041452.06
+            },
+            {
+                "KMeans_Cluster": 2,
+                "Count": 833,
+                "Mean_Recency": 18.236494597839137,
+                "Mean_Frequency": 2.1152460984393757,
+                "Mean_Monetary": 533.0940696278511,
+                "Total_Revenue": 444067.36
+            },
+            {
+                "KMeans_Cluster": 1,
+                "Count": 1635,
+                "Mean_Recency": 182.73944954128442,
+                "Mean_Frequency": 1.3241590214067278,
+                "Mean_Monetary": 350.06648929663606,
+                "Total_Revenue": 572358.71
+            }
+        ]
+    },
+    "segment_breakdown": [
+        {
+            "Customer_Segment": "About to Sleep",
+            "Count": 408,
+            "Revenue": 201583.78
+        },
+        {
+            "Customer_Segment": "At Risk",
+            "Count": 481,
+            "Revenue": 384609.78
+        },
+        {
+            "Customer_Segment": "Can't Lose Them",
+            "Count": 175,
+            "Revenue": 425621.24
+        },
+        {
+            "Customer_Segment": "Champions",
+            "Count": 1119,
+            "Revenue": 5778845.26
+        },
+        {
+            "Customer_Segment": "Hibernating",
+            "Count": 557,
+            "Revenue": 124032.86
+        },
+        {
+            "Customer_Segment": "Lost / Dormant",
+            "Count": 112,
+            "Revenue": 112957.9
+        },
+        {
+            "Customer_Segment": "Loyal Customers",
+            "Count": 825,
+            "Revenue": 1174369.66
+        },
+        {
+            "Customer_Segment": "Potential Loyalists",
+            "Count": 310,
+            "Revenue": 139597.65
+        },
+        {
+            "Customer_Segment": "Promising / Need Attention",
+            "Count": 346,
+            "Revenue": 156642.31
+        }
+    ]
+}

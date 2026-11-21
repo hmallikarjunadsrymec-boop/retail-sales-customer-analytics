@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Web Analytics Dashboard | Retail Analytics</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- Chart.js CDN for interactive visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <span class="brand-icon">🛍️</span>
+      <span>RetailAnalytics Enterprise</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard" class="active">Web Dashboard</a></li>
+      <li><a href="http://localhost:8501" target="_blank">Streamlit App ↗</a></li>
+      <li><a href="/" class="btn-secondary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">Portal Home</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+
+    <!-- Dashboard Header & Real-time Filters -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--secondary);">Executive Commercial Dashboard</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Live analytics connected to SQLite backend (522,707 commercial records).</p>
+      </div>
+      <div>
+        <a href="http://localhost:8501" target="_blank" class="nav-btn" style="text-decoration: none;">Launch Streamlit Suite ↗</a>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <section class="filter-bar">
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
+        <div class="filter-group">
+          <label for="countryFilter" class="filter-label">Market / Country:</label>
+          <select id="countryFilter" class="filter-select">
+            <option value="All">All Countries</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="categoryFilter" class="filter-label">Category:</label>
+          <select id="categoryFilter" class="filter-select">
+            <option value="All">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Status: <span style="color: var(--success); font-weight: 600;">● Live SQLite Sync</span>
+      </div>
+    </section>
+
+    <!-- Executive KPI Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Gross Realized Revenue</div>
+        <div class="kpi-value" id="kpiRevenue">Loading...</div>
+        <div class="kpi-subtitle">Total invoiced sales (£ GBP)</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Total Invoiced Orders</div>
+        <div class="kpi-value" id="kpiOrders">Loading...</div>
+        <div class="kpi-subtitle">Distinct commercial checkouts</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Average Order Value (AOV)</div>
+        <div class="kpi-value" id="kpiAOV">Loading...</div>
+        <div class="kpi-subtitle">Mean checkout basket size</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Active Customers</div>
+        <div class="kpi-value" id="kpiCustomers">Loading...</div>
+        <div class="kpi-subtitle">Registered account base</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Total Units Sold</div>
+        <div class="kpi-value" id="kpiUnits">Loading...</div>
+        <div class="kpi-subtitle">Dispatched catalog merchandise</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Repeat Purchase Rate</div>
+        <div class="kpi-value" id="kpiRepeatRate">Loading...</div>
+        <div class="kpi-subtitle">Multi-order accounts</div>
+      </div>
+    </section>
+
+    <!-- Charts Row 1: Monthly Trend & Category Share -->
+    <section class="chart-grid">
+      <div class="chart-card col-8">
+        <div class="chart-header">
+          <h2 class="chart-title">Monthly Revenue & Order Volume Trend</h2>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Dual-Axis (Revenue + Orders)</span>
+        </div>
+        <div class="chart-body">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card col-4">
+        <div class="chart-header">
+          <h2 class="chart-title">Revenue Share by Category</h2>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Gross Contribution</span>
+        </div>
+        <div class="chart-body">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Row 2: Top Products, RFM Segments, Geographic Markets -->
+    <section class="chart-grid">
+      <div class="chart-card col-4">
+        <div class="chart-header">
+          <h2 class="chart-title">Top 10 Hero SKUs (Revenue)</h2>
+        </div>
+        <div class="chart-body">
+          <canvas id="topProductsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card col-4">
+        <div class="chart-header">
+          <h2 class="chart-title">RFM Segment Revenue Contribution</h2>
+        </div>
+        <div class="chart-body">
+          <canvas id="rfmChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card col-4">
+        <div class="chart-header">
+          <h2 class="chart-title">Top Geographic Markets</h2>
+        </div>
+        <div class="chart-body">
+          <canvas id="countryChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer Account Explorer Table -->
+    <section style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 class="chart-title">Customer Account Explorer (RFM Intelligence)</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Filter, inspect and export registered customer accounts and behavioral scores.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <input type="text" id="customerSearch" placeholder="Search Customer ID or Country..." style="padding: 0.45rem 0.85rem; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none;">
+          <select id="rfmFilterSelect" class="filter-select">
+            <option value="All">All Segments</option>
+            <option value="Champions">Champions</option>
+            <option value="Loyal Customers">Loyal Customers</option>
+            <option value="Can't Lose Them">Can't Lose Them</option>
+            <option value="At Risk">At Risk</option>
+            <option value="Potential Loyalists">Potential Loyalists</option>
+            <option value="About to Sleep">About to Sleep</option>
+            <option value="Hibernating">Hibernating</option>
+          </select>
+          <button onclick="exportCurrentCustomers()" class="btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Customer ID</th>
+              <th>RFM Segment</th>
+              <th>ML Cluster Persona</th>
+              <th>Recency</th>
+              <th>Orders</th>
+              <th>Total Spend</th>
+              <th>Avg Order Value</th>
+              <th>RFM Score</th>
+              <th>Country</th>
+            </tr>
+          </thead>
+          <tbody id="customersTableBody">
+            <tr><td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading customer records...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+        <div id="pageInfo">Page 1</div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="prevPageBtn" onclick="changePage(-1)" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">← Previous</button>
+          <button id="nextPageBtn" onclick="changePage(1)" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">Next →</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Retail Sales & Customer Analytics Platform | Real-Time Web Application & Executive Decision System</p>
+  </footer>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

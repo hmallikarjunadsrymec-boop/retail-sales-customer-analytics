@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retail Sales & Customer Analytics Platform | Corporate Portal</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <span class="brand-icon">🛍️</span>
+      <span>RetailAnalytics Enterprise</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/dashboard">Web Dashboard</a></li>
+      <li><a href="http://localhost:8501" target="_blank">Streamlit App ↗</a></li>
+      <li><a href="/dashboard" class="nav-btn">Launch Dashboard →</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <span class="hero-badge">Enterprise Decision Intelligence</span>
+    <h1>Retail Sales & Customer Analytics Platform</h1>
+    <p>A unified analytics solution delivering real-time revenue intelligence, transactional SQL modeling, customer RFM segmentation, and inventory optimization across 522,707 commercial orders.</p>
+    <div class="hero-actions">
+      <a href="/dashboard" class="btn-primary">Open Web Analytics Dashboard</a>
+      <a href="http://localhost:8501" target="_blank" class="btn-secondary">View Streamlit Suite ↗</a>
+    </div>
+  </header>
+
+  <!-- Key Metrics Ribbon -->
+  <section class="container" style="padding-top: 3rem; padding-bottom: 2rem;">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Gross Realized Revenue</div>
+        <div class="kpi-value">£10.01M</div>
+        <div class="kpi-subtitle">Across 12-month operating ledger</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Invoiced Checkouts</div>
+        <div class="kpi-value">19,774</div>
+        <div class="kpi-subtitle">Completed wholesale & retail orders</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Average Order Value</div>
+        <div class="kpi-value">£506.19</div>
+        <div class="kpi-subtitle">Median basket size: £232.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Customer Retention</div>
+        <div class="kpi-value">65.27%</div>
+        <div class="kpi-subtitle">2,828 repeat buyer accounts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture & Methodology -->
+  <section class="container" style="padding-top: 1rem;">
+    <div style="background-color: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2.5rem; box-shadow: var(--shadow-sm);">
+      <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--secondary); margin-bottom: 1rem;">End-to-End Analytical Architecture</h2>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem;">Built on enterprise data engineering and statistical modeling standards:</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.75rem;">
+        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">⚙️</div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">1. Data Pipeline</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Deduplication, returns isolation, zero/negative price elimination, and description imputation. 96.46% verified data retention.</p>
+        </div>
+
+        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🗄️</div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">2. SQL Relational Engine</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Indexed SQLite 3 database executing 10 analytical queries including <code>LAG()</code> window functions for MoM revenue growth.</p>
+        </div>
+
+        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🎯</div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">3. RFM & ML Clustering</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Behavioral quintiles and unsupervised K-Means (k=4) clustering evaluated with Elbow and Silhouette coefficients.</p>
+        </div>
+
+        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📊</div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">4. BI & Decision Support</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Star Schema CSV exports, production DAX measures library, and Streamlit + Web interfaces for leadership teams.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Retail Sales & Customer Analytics Platform | Enterprise Data Science & Business Intelligence Solution</p>
+  </footer>
+
+</body>
+</html>
