@@ -13,15 +13,16 @@ An enterprise-grade, end-to-end retail intelligence solution that ingests, clean
 
 ## 🌐 Live Interactive Web Applications
 
-The platform is deployed and running live in production on Vercel:
+The unified analytics platform is fully deployed and running 24/7 in production on Vercel. **It is 100% self-contained in the cloud and does not require any active local server or external live data stream:**
 
 | Application Interface | Live Production URL | Technology Stack | Key Capabilities |
 | :--- | :--- | :--- | :--- |
 | **🏢 Corporate Website Portal** | [https://retail-sales-customer-analytics.vercel.app/](https://retail-sales-customer-analytics.vercel.app/) | FastAPI, HTML5, CSS3 | Executive landing portal, end-to-end architecture breakdown, data lineage. |
 | **📊 Executive Web Analytics Dashboard** | [https://retail-sales-customer-analytics.vercel.app/dashboard](https://retail-sales-customer-analytics.vercel.app/dashboard) | FastAPI, SQLite 3, Chart.js | Real-time KPI cards, dynamic Chart.js charts, country/category filters, paginated customer explorer. |
-| **🛍️ Streamlit Analytics Suite** | *Deployable to Streamlit Community Cloud* | Streamlit, Altair, Pandas | 6-Page decision platform, date range picker, product search, behavioral RFM drill-downs, CSV exports. |
 
-### How to Run Locally
+> **Note:** The cloud applications run directly against an embedded cloud SQLite database (522,707 records) hosted on Vercel. All analytics, interactive charts, and customer segment views are fully interactive and accessible at any time without needing a live stream or local computer running.
+
+### 💻 Running Locally (Optional)
 ```bash
 # Terminal 1: Launch Corporate Portal & Web Dashboard (Port 8000)
 python -m uvicorn web.api:app --host 0.0.0.0 --port 8000
