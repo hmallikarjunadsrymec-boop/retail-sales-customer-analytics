@@ -13,15 +13,15 @@ An enterprise-grade, end-to-end retail intelligence solution that ingests, clean
 
 ## 🌐 Live Interactive Web Applications
 
-The platform features two production web applications running concurrently against the analytical engine:
+The platform is deployed and running live in production on Vercel:
 
-| Application Interface | Live Production URL | Local Access URL | Default Port | Technology Stack | Key Capabilities |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **🏢 Corporate Website Portal** | [https://retail-sales-customer-analytics.vercel.app/](https://retail-sales-customer-analytics.vercel.app/) | [http://localhost:8000/](http://localhost:8000/) | `8000` | FastAPI, HTML5, CSS3 | Executive landing portal, end-to-end architecture breakdown, data lineage. |
-| **📊 Executive Web Analytics Dashboard** | [https://retail-sales-customer-analytics.vercel.app/dashboard](https://retail-sales-customer-analytics.vercel.app/dashboard) | [http://localhost:8000/dashboard](http://localhost:8000/dashboard) | `8000` | FastAPI, SQLite 3, Chart.js | Real-time KPI cards, dynamic Chart.js charts, country/category filters, paginated customer explorer. |
-| **🛍️ Streamlit Analytics Suite** | *Deployable to Streamlit Community Cloud* | [http://localhost:8501/](http://localhost:8501/) | `8501` | Streamlit, Altair, Pandas | 6-Page decision platform, date range picker, product search, behavioral RFM drill-downs, CSV exports. |
+| Application Interface | Live Production URL | Technology Stack | Key Capabilities |
+| :--- | :--- | :--- | :--- |
+| **🏢 Corporate Website Portal** | [https://retail-sales-customer-analytics.vercel.app/](https://retail-sales-customer-analytics.vercel.app/) | FastAPI, HTML5, CSS3 | Executive landing portal, end-to-end architecture breakdown, data lineage. |
+| **📊 Executive Web Analytics Dashboard** | [https://retail-sales-customer-analytics.vercel.app/dashboard](https://retail-sales-customer-analytics.vercel.app/dashboard) | FastAPI, SQLite 3, Chart.js | Real-time KPI cards, dynamic Chart.js charts, country/category filters, paginated customer explorer. |
+| **🛍️ Streamlit Analytics Suite** | *Deployable to Streamlit Community Cloud* | Streamlit, Altair, Pandas | 6-Page decision platform, date range picker, product search, behavioral RFM drill-downs, CSV exports. |
 
-### How to Launch the Web Interfaces
+### How to Run Locally
 ```bash
 # Terminal 1: Launch Corporate Portal & Web Dashboard (Port 8000)
 python -m uvicorn web.api:app --host 0.0.0.0 --port 8000
