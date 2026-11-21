@@ -1,0 +1,19 @@
+# Raw dataset and derived files not needed at runtime
+data/raw/
+data/processed/customer_rfm.parquet
+data/processed/retail_cancellations.csv
+data/processed/cleaning_summary.json
+
+# Streamlit app is deployed separately
+app.py
+dashboard/
+
+# Development-only files
+notebooks/
+tests/
+reports/eda_figures/
+src/data_loader.py
+src/data_cleaner.py
+src/eda.py
+src/powerbi_export.py
+src/segmentation.py
