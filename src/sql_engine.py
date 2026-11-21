@@ -5,14 +5,16 @@ Loads cleaned retail data into SQLite, manages analytical queries, and validates
 
 import os
 import sqlite3
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
-DB_PATH = os.path.join("data", "processed", "retail_analytics.db")
-PARQUET_PATH = os.path.join("data", "processed", "retail_cleaned.parquet")
-CSV_PATH = os.path.join("data", "processed", "retail_cleaned.csv")
-SCHEMA_PATH = os.path.join("sql", "schema.sql")
-QUERIES_PATH = os.path.join("sql", "sales_analysis.sql")
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = str(BASE_DIR / "data" / "processed" / "retail_analytics.db")
+PARQUET_PATH = str(BASE_DIR / "data" / "processed" / "retail_cleaned.parquet")
+CSV_PATH = str(BASE_DIR / "data" / "processed" / "retail_cleaned.csv")
+SCHEMA_PATH = str(BASE_DIR / "sql" / "schema.sql")
+QUERIES_PATH = str(BASE_DIR / "sql" / "sales_analysis.sql")
 
 
 def get_connection(db_path: str = DB_PATH) -> sqlite3.Connection:
