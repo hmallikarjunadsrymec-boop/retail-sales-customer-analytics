@@ -7,10 +7,11 @@ RFM machine learning models, and Power BI data exports into a single unified web
 import os
 import json
 import sqlite3
+import csv
+from collections import defaultdict
 from pathlib import Path
-import pandas as pd
 from fastapi import FastAPI, Query, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +36,42 @@ def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+_rfm_records_cache = None
+
+
+def load_rfm_records():
+    """Loads and caches customer RFM records from CSV without needing pandas."""
+    global _rfm_records_cache
+    if _rfm_records_cache is not None:
+        return _rfm_records_cache
+    if not os.path.exists(RFM_CSV_PATH):
+        return []
+    records = []
+    with open(RFM_CSV_PATH, mode="r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            records.append({
+                "CustomerID": int(r["CustomerID"]) if r.get("CustomerID") else 0,
+                "Recency": int(r["Recency"]) if r.get("Recency") else 0,
+                "Frequency": int(r["Frequency"]) if r.get("Frequency") else 0,
+                "Monetary": float(r["Monetary"]) if r.get("Monetary") else 0.0,
+                "FirstPurchaseDate": r.get("FirstPurchaseDate", ""),
+                "LastPurchaseDate": r.get("LastPurchaseDate", ""),
+                "Country": r.get("Country", ""),
+                "AvgOrderValue": float(r["AvgOrderValue"]) if r.get("AvgOrderValue") else 0.0,
+                "CustomerTenureDays": int(r["CustomerTenureDays"]) if r.get("CustomerTenureDays") else 0,
+                "R_Score": int(r["R_Score"]) if r.get("R_Score") else 0,
+                "F_Score": int(r["F_Score"]) if r.get("F_Score") else 0,
+                "M_Score": int(r["M_Score"]) if r.get("M_Score") else 0,
+                "RFM_Score": int(r["RFM_Score"]) if r.get("RFM_Score") else 0,
+                "Customer_Segment": r.get("Customer_Segment", ""),
+                "KMeans_Cluster": int(r["KMeans_Cluster"]) if r.get("KMeans_Cluster") else 0,
+                "Cluster_Name": r.get("Cluster_Name", "")
+            })
+    _rfm_records_cache = records
+    return _rfm_records_cache
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -211,13 +248,24 @@ async def get_order_distribution():
     conn.close()
 
     values = [r["order_total"] for r in rows]
-    series = pd.Series(values)
+    if values:
+        sorted_vals = sorted(values)
+        n = len(sorted_vals)
+        mean_aov = round(sum(sorted_vals) / n, 2)
+        if n % 2 == 1:
+            median_aov = sorted_vals[n // 2]
+        else:
+            median_aov = round((sorted_vals[n // 2 - 1] + sorted_vals[n // 2]) / 2, 2)
+        p75_aov = round(float(sorted_vals[int(0.75 * (n - 1))]), 2)
+        p95_aov = round(float(sorted_vals[int(0.95 * (n - 1))]), 2)
+    else:
+        mean_aov = median_aov = p75_aov = p95_aov = 0.0
 
     return {
-        "mean_aov": round(float(series.mean()), 2) if len(series) > 0 else 0,
-        "median_aov": round(float(series.median()), 2) if len(series) > 0 else 0,
-        "p75_aov": round(float(series.quantile(0.75)), 2) if len(series) > 0 else 0,
-        "p95_aov": round(float(series.quantile(0.95)), 2) if len(series) > 0 else 0,
+        "mean_aov": mean_aov,
+        "median_aov": median_aov,
+        "p75_aov": p75_aov,
+        "p95_aov": p95_aov,
         "sample_values": values[:500]  # Representative sample for charting
     }
 
@@ -308,52 +356,64 @@ async def get_countries(limit: int = 10):
 @app.get("/api/rfm")
 async def get_rfm_summary():
     """Returns RFM segment statistics and K-Means cluster summaries."""
-    if not os.path.exists(RFM_CSV_PATH):
+    records = load_rfm_records()
+    if not records:
         raise HTTPException(status_code=404, detail="RFM dataset not found")
 
-    df_rfm = pd.read_csv(RFM_CSV_PATH)
-    total_rev = df_rfm["Monetary"].sum()
-    total_cust = len(df_rfm)
+    total_cust = len(records)
+    total_rev = sum(r["Monetary"] for r in records)
 
-    seg_summary = (
-        df_rfm.groupby("Customer_Segment")
-        .agg(
-            Customer_Count=("CustomerID", "count"),
-            Total_Revenue=("Monetary", "sum"),
-            Avg_Recency=("Recency", "mean"),
-            Avg_Frequency=("Frequency", "mean"),
-            Avg_Monetary=("Monetary", "mean")
-        )
-        .reset_index()
-        .sort_values("Total_Revenue", ascending=False)
-    )
-    seg_summary["Cust_Share_Pct"] = (seg_summary["Customer_Count"] / total_cust * 100).round(2)
-    seg_summary["Rev_Share_Pct"] = (seg_summary["Total_Revenue"] / total_rev * 100).round(2)
-    seg_summary["Total_Revenue"] = seg_summary["Total_Revenue"].round(2)
-    seg_summary["Avg_Recency"] = seg_summary["Avg_Recency"].round(1)
-    seg_summary["Avg_Frequency"] = seg_summary["Avg_Frequency"].round(1)
-    seg_summary["Avg_Monetary"] = seg_summary["Avg_Monetary"].round(2)
+    # Segment aggregations
+    seg_map = defaultdict(lambda: {"count": 0, "rev": 0.0, "rec": 0, "freq": 0, "mon": 0.0})
+    for r in records:
+        s = seg_map[r["Customer_Segment"]]
+        s["count"] += 1
+        s["rev"] += r["Monetary"]
+        s["rec"] += r["Recency"]
+        s["freq"] += r["Frequency"]
+        s["mon"] += r["Monetary"]
 
-    cluster_summary = (
-        df_rfm.groupby(["KMeans_Cluster", "Cluster_Name"])
-        .agg(
-            Accounts=("CustomerID", "count"),
-            Mean_Recency=("Recency", "mean"),
-            Mean_Frequency=("Frequency", "mean"),
-            Mean_Spend=("Monetary", "mean"),
-            Total_Spend=("Monetary", "sum")
-        )
-        .reset_index()
-        .sort_values("Total_Spend", ascending=False)
-    )
-    cluster_summary["Mean_Recency"] = cluster_summary["Mean_Recency"].round(1)
-    cluster_summary["Mean_Frequency"] = cluster_summary["Mean_Frequency"].round(1)
-    cluster_summary["Mean_Spend"] = cluster_summary["Mean_Spend"].round(2)
-    cluster_summary["Total_Spend"] = cluster_summary["Total_Spend"].round(2)
+    seg_summary = []
+    for seg, s in sorted(seg_map.items(), key=lambda x: x[1]["rev"], reverse=True):
+        cnt = s["count"]
+        seg_summary.append({
+            "Customer_Segment": seg,
+            "Customer_Count": cnt,
+            "Total_Revenue": round(s["rev"], 2),
+            "Avg_Recency": round(s["rec"] / cnt, 1),
+            "Avg_Frequency": round(s["freq"] / cnt, 1),
+            "Avg_Monetary": round(s["mon"] / cnt, 2),
+            "Cust_Share_Pct": round(cnt / total_cust * 100, 2),
+            "Rev_Share_Pct": round(s["rev"] / total_rev * 100, 2)
+        })
+
+    # Cluster aggregations
+    cluster_map = defaultdict(lambda: {"count": 0, "rec": 0, "freq": 0, "mon": 0.0, "name": ""})
+    for r in records:
+        k = r["KMeans_Cluster"]
+        c = cluster_map[k]
+        c["count"] += 1
+        c["rec"] += r["Recency"]
+        c["freq"] += r["Frequency"]
+        c["mon"] += r["Monetary"]
+        c["name"] = r["Cluster_Name"]
+
+    cluster_summary = []
+    for k, c in sorted(cluster_map.items(), key=lambda x: x[1]["mon"], reverse=True):
+        cnt = c["count"]
+        cluster_summary.append({
+            "KMeans_Cluster": k,
+            "Cluster_Name": c["name"],
+            "Accounts": cnt,
+            "Mean_Recency": round(c["rec"] / cnt, 1),
+            "Mean_Frequency": round(c["freq"] / cnt, 1),
+            "Mean_Spend": round(c["mon"] / cnt, 2),
+            "Total_Spend": round(c["mon"], 2)
+        })
 
     return {
-        "segments": seg_summary.to_dict(orient="records"),
-        "clusters": cluster_summary.to_dict(orient="records"),
+        "segments": seg_summary,
+        "clusters": cluster_summary,
         "total_customers": total_cust,
         "total_revenue": round(float(total_rev), 2)
     }
@@ -367,28 +427,25 @@ async def get_customers(
     page_size: int = 25
 ):
     """Returns paginated customer accounts with RFM details."""
-    if not os.path.exists(RFM_CSV_PATH):
+    records = load_rfm_records()
+    if not records:
         raise HTTPException(status_code=404, detail="RFM dataset not found")
 
-    df_rfm = pd.read_csv(RFM_CSV_PATH)
-    filtered = df_rfm
-
+    filtered = records
     if segment and segment != "All":
-        filtered = filtered[filtered["Customer_Segment"] == segment]
+        filtered = [r for r in filtered if r["Customer_Segment"] == segment]
 
     if search:
         s = search.strip().upper()
-        mask = (
-            filtered["CustomerID"].astype(str).str.contains(s, na=False) |
-            filtered["Country"].astype(str).str.upper().str.contains(s, na=False)
-        )
-        filtered = filtered[mask]
+        filtered = [
+            r for r in filtered
+            if s in str(r["CustomerID"]).upper() or s in r["Country"].upper()
+        ]
 
     total_records = len(filtered)
     start_idx = (page - 1) * page_size
     end_idx = start_idx + page_size
-
-    page_data = filtered.iloc[start_idx:end_idx].to_dict(orient="records")
+    page_data = filtered[start_idx:end_idx]
 
     return {
         "total_records": total_records,
@@ -420,6 +477,30 @@ async def download_powerbi_file(filename: str):
     """Provides downloadable Power BI Star Schema CSV files."""
     file_path = os.path.join(POWERBI_DIR, filename)
     if not os.path.exists(file_path):
+        if filename == "FactSales.csv" and os.path.exists(DB_PATH):
+            def iter_csv():
+                conn = get_db()
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT invoice_no, stock_code, customer_id, invoice_date, quantity, unit_price, revenue, country, category "
+                    "FROM sales_transactions"
+                )
+                yield "InvoiceNo,StockCode,CustomerID,InvoiceDate,Quantity,UnitPrice,Revenue,Country,Category\n"
+                while True:
+                    batch = cursor.fetchmany(5000)
+                    if not batch:
+                        break
+                    yield "".join(
+                        f'"{r[0]}","{r[1]}","{r[2]}","{r[3]}",{r[4]},{r[5]},{r[6]},"{r[7]}","{r[8]}"\n'
+                        for r in batch
+                    )
+                conn.close()
+
+            return StreamingResponse(
+                iter_csv(),
+                media_type="text/csv",
+                headers={"Content-Disposition": "attachment; filename=FactSales.csv"}
+            )
         raise HTTPException(status_code=404, detail="Power BI file not found")
     return FileResponse(file_path, media_type="text/csv", filename=filename)
 
