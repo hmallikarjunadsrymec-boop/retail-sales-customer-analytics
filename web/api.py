@@ -7,17 +7,19 @@ RFM machine learning models, and Power BI data exports into a single unified web
 import os
 import json
 import sqlite3
+from pathlib import Path
 import pandas as pd
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-DB_PATH = os.path.join("data", "processed", "retail_analytics.db")
-RFM_CSV_PATH = os.path.join("data", "processed", "customer_rfm.csv")
-POWERBI_DIR = os.path.join("data", "processed", "powerbi")
-REPORTS_DIR = "reports"
-TEMPLATES_DIR = os.path.join("web", "templates")
-STATIC_DIR = os.path.join("web", "static")
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = str(BASE_DIR / "data" / "processed" / "retail_analytics.db")
+RFM_CSV_PATH = str(BASE_DIR / "data" / "processed" / "customer_rfm.csv")
+POWERBI_DIR = str(BASE_DIR / "data" / "processed" / "powerbi")
+REPORTS_DIR = str(BASE_DIR / "reports")
+TEMPLATES_DIR = str(BASE_DIR / "web" / "templates")
+STATIC_DIR = str(BASE_DIR / "web" / "static")
 
 app = FastAPI(
     title="Retail Sales & Customer Analytics Platform",
