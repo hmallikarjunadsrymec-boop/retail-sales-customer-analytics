@@ -19,4 +19,12 @@ database = Path(DB_PATH)
 if not database.is_file() or database.stat().st_size == 0:
     raise RuntimeError("SQLite database build failed: database file is missing or empty.")
 
+# The Parquet source is needed only during the build. Keeping it in the
+# deployed Python function wastes bundle space; the generated SQLite DB is
+# the runtime data source.
+source_path = Path(source)
+if source_path.exists() and source_path.resolve() != database.resolve():
+    source_path.unlink()
+    print(f"Removed build-only source dataset: {source_path}")
+
 print(f"Vercel build prepared SQLite database: {database} ({rows:,} rows, {database.stat().st_size:,} bytes)")
