@@ -3,100 +3,578 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Retail Sales & Customer Analytics Platform | Corporate Portal</title>
+  <title>Retail Sales & Customer Analytics Platform | Unified Decision Suite</title>
   <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-  <!-- Navigation Bar -->
+  <!-- Top Navigation Header -->
   <nav class="navbar">
     <a href="/" class="brand">
       <span class="brand-icon">🛍️</span>
-      <span>RetailAnalytics Enterprise</span>
+      <span>RetailAnalytics Unified Suite</span>
     </a>
-    <ul class="nav-links">
-      <li><a href="/" class="active">Home</a></li>
-      <li><a href="/dashboard">Web Dashboard</a></li>
-      <li><a href="http://localhost:8501" target="_blank">Streamlit App ↗</a></li>
-      <li><a href="/dashboard" class="nav-btn">Launch Dashboard →</a></li>
-    </ul>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="font-size: 0.85rem; color: var(--success); font-weight: 600;">● SQLite Engine Active (522,707 Records)</span>
+      <a href="https://github.com/hmallikarjunadsrymec-boop/retail-sales-customer-analytics" target="_blank" class="btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.85rem; text-decoration: none;">GitHub Repo ↗</a>
+    </div>
   </nav>
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <span class="hero-badge">Enterprise Decision Intelligence</span>
-    <h1>Retail Sales & Customer Analytics Platform</h1>
-    <p>A unified analytics solution delivering real-time revenue intelligence, transactional SQL modeling, customer RFM segmentation, and inventory optimization across 522,707 commercial orders.</p>
-    <div class="hero-actions">
-      <a href="/dashboard" class="btn-primary">Open Web Analytics Dashboard</a>
-      <a href="http://localhost:8501" target="_blank" class="btn-secondary">View Streamlit Suite ↗</a>
+  <main class="container">
+
+    <!-- Global Interactive Filter Bar -->
+    <section class="filter-bar">
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
+        <div class="filter-group">
+          <label for="countryFilter" class="filter-label">Market / Country:</label>
+          <select id="countryFilter" class="filter-select">
+            <option value="All">All Countries</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="categoryFilter" class="filter-label">Category:</label>
+          <select id="categoryFilter" class="filter-select">
+            <option value="All">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <button onclick="exportCurrentCustomers()" class="btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.85rem;">📥 Export RFM (CSV)</button>
+        <a href="/download/report/BUSINESS_RECOMMENDATIONS.md" class="btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.85rem; text-decoration: none;">📄 Insights Report</a>
+      </div>
+    </section>
+
+    <!-- Unified Dashboard View Tabs -->
+    <nav class="dashboard-tabs">
+      <button class="tab-btn active" data-tab="tab-overview">📊 Executive Overview</button>
+      <button class="tab-btn" data-tab="tab-sales">📈 Sales Dynamics</button>
+      <button class="tab-btn" data-tab="tab-products">📦 Product Velocity</button>
+      <button class="tab-btn" data-tab="tab-customers">👥 Customer Retention</button>
+      <button class="tab-btn" data-tab="tab-rfm">🎯 RFM & ML Clusters</button>
+      <button class="tab-btn" data-tab="tab-insights">💡 Business Strategy</button>
+      <button class="tab-btn" data-tab="tab-powerbi">📑 Power BI & Star Schema</button>
+    </nav>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: EXECUTIVE OVERVIEW                                                 -->
+    <!-- ========================================================================= -->
+    <div id="tab-overview" class="tab-content active">
+      <!-- KPI Row -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Gross Realized Revenue</div>
+          <div class="kpi-value" id="kpiRevenue">£10,009,302.93</div>
+          <div class="kpi-subtitle">Across 12-month commercial ledger</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Total Invoiced Orders</div>
+          <div class="kpi-value" id="kpiOrders">19,774</div>
+          <div class="kpi-subtitle">Completed commercial checkouts</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Average Order Value (AOV)</div>
+          <div class="kpi-value" id="kpiAOV">£506.19</div>
+          <div class="kpi-subtitle">Median basket size: £232.00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Active Customers</div>
+          <div class="kpi-value" id="kpiCustomers">4,333</div>
+          <div class="kpi-subtitle">Identified registered accounts</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Total Units Sold</div>
+          <div class="kpi-value" id="kpiUnits">5,406,349</div>
+          <div class="kpi-subtitle">Dispatched catalog merchandise</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Repeat Purchase Rate</div>
+          <div class="kpi-value" id="kpiRepeatRate">65.27%</div>
+          <div class="kpi-subtitle">2,828 multi-order customers</div>
+        </div>
+      </section>
+
+      <!-- Charts: Monthly Trend & Category Share -->
+      <section class="chart-grid">
+        <div class="chart-card col-8">
+          <div class="chart-header">
+            <h2 class="chart-title">Monthly Revenue & Order Volume Trajectory</h2>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Dual-Axis Trend</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card col-4">
+          <div class="chart-header">
+            <h2 class="chart-title">Revenue Share by Category</h2>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Realized Contribution</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts: Top SKUs, RFM Segments, Markets -->
+      <section class="chart-grid">
+        <div class="chart-card col-4">
+          <div class="chart-header">
+            <h2 class="chart-title">Top 10 Hero SKUs (Revenue)</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="topProductsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card col-4">
+          <div class="chart-header">
+            <h2 class="chart-title">RFM Segment Revenue Contribution</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="rfmChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card col-4">
+          <div class="chart-header">
+            <h2 class="chart-title">Top Geographic Markets</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="countryChart"></canvas>
+          </div>
+        </div>
+      </section>
     </div>
-  </header>
 
-  <!-- Key Metrics Ribbon -->
-  <section class="container" style="padding-top: 3rem; padding-bottom: 2rem;">
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-title">Gross Realized Revenue</div>
-        <div class="kpi-value">£10.01M</div>
-        <div class="kpi-subtitle">Across 12-month operating ledger</div>
+    <!-- ========================================================================= -->
+    <!-- TAB 2: SALES DYNAMICS                                                     -->
+    <!-- ========================================================================= -->
+    <div id="tab-sales" class="tab-content">
+      <div class="callout callout-info">
+        <strong>Temporal Insight:</strong> Peak wholesale volume occurs between <strong>11:00 AM and 3:00 PM Tuesday through Thursday</strong>. November 2011 is the top month (£1.45M), followed by October (£1.10M) and September (£1.03M).
       </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Invoiced Checkouts</div>
-        <div class="kpi-value">19,774</div>
-        <div class="kpi-subtitle">Completed wholesale & retail orders</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Average Order Value</div>
-        <div class="kpi-value">£506.19</div>
-        <div class="kpi-subtitle">Median basket size: £232.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Customer Retention</div>
-        <div class="kpi-value">65.27%</div>
-        <div class="kpi-subtitle">2,828 repeat buyer accounts</div>
-      </div>
+
+      <section class="chart-grid">
+        <div class="chart-card col-6">
+          <div class="chart-header">
+            <h2 class="chart-title">Month-over-Month (MoM) Revenue Growth (%)</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="momGrowthChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card col-6">
+          <div class="chart-header">
+            <h2 class="chart-title">Order Volume by Day of Week</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="dowChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="chart-grid">
+        <div class="chart-card col-8">
+          <div class="chart-header">
+            <h2 class="chart-title">Hourly Ordering Intensity (24h Distribution)</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="hourChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card col-4">
+          <div class="chart-header">
+            <h2 class="chart-title">Order Basket Statistics</h2>
+          </div>
+          <div style="padding: 1rem 0;">
+            <div style="margin-bottom: 1rem;">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Mean Order Value (AOV)</div>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--primary);" id="statMeanAOV">£506.19</div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Median Order Value</div>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--secondary);" id="statMedianAOV">£232.00</div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">75th Percentile Basket</div>
+              <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);" id="statP75AOV">£502.50</div>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">95th Percentile (Wholesale)</div>
+              <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);" id="statP95AOV">£1,650.00</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Monthly Summary Table -->
+      <section style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <h2 class="chart-title" style="margin-bottom: 1rem;">Monthly Financial Breakdown Ledger</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Revenue (£)</th>
+                <th>Orders</th>
+                <th>Active Customers</th>
+                <th>Units Sold</th>
+                <th>AOV (£)</th>
+                <th>MoM Growth</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyTableBody">
+              <tr><td colspan="7">Loading monthly data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
-  </section>
 
-  <!-- Architecture & Methodology -->
-  <section class="container" style="padding-top: 1rem;">
-    <div style="background-color: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2.5rem; box-shadow: var(--shadow-sm);">
-      <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--secondary); margin-bottom: 1rem;">End-to-End Analytical Architecture</h2>
-      <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem;">Built on enterprise data engineering and statistical modeling standards:</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.75rem;">
-        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">⚙️</div>
-          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">1. Data Pipeline</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted);">Deduplication, returns isolation, zero/negative price elimination, and description imputation. 96.46% verified data retention.</p>
+    <!-- ========================================================================= -->
+    <!-- TAB 3: PRODUCT VELOCITY                                                   -->
+    <!-- ========================================================================= -->
+    <div id="tab-products" class="tab-content">
+      <section class="chart-grid">
+        <div class="chart-card col-6">
+          <div class="chart-header">
+            <h2 class="chart-title">Top 10 Products by Gross Revenue (£)</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="topVolumeChart"></canvas>
+          </div>
         </div>
 
-        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🗄️</div>
-          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">2. SQL Relational Engine</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted);">Indexed SQLite 3 database executing 10 analytical queries including <code>LAG()</code> window functions for MoM revenue growth.</p>
+        <div class="chart-card col-6">
+          <div class="chart-header">
+            <h2 class="chart-title">Category Performance Summary</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Revenue (£)</th>
+                  <th>Share</th>
+                  <th>Units</th>
+                  <th>Orders</th>
+                  <th>Avg Price</th>
+                </tr>
+              </thead>
+              <tbody id="categoryTableBody">
+                <tr><td colspan="6">Loading categories...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive SKU Search Table -->
+      <section style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 class="chart-title">Merchandise Catalog Velocity Explorer</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time searchable inventory catalog.</p>
+          </div>
+          <input type="text" id="skuSearchInput" placeholder="🔍 Search description or SKU..." style="padding: 0.45rem 1rem; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none; width: 280px;">
         </div>
 
-        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🎯</div>
-          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">3. RFM & ML Clustering</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted);">Behavioral quintiles and unsupervised K-Means (k=4) clustering evaluated with Elbow and Silhouette coefficients.</p>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Avg Unit Price</th>
+                <th>Units Sold</th>
+                <th>Gross Revenue</th>
+                <th>Orders</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr><td colspan="7">Loading catalog...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: CUSTOMER RETENTION                                                 -->
+    <!-- ========================================================================= -->
+    <div id="tab-customers" class="tab-content">
+      <section class="chart-grid">
+        <div class="chart-card col-5">
+          <div class="chart-header">
+            <h2 class="chart-title">Customer Retention Mix (Repeat vs One-Time)</h2>
+          </div>
+          <div class="chart-body">
+            <canvas id="retentionDonutChart"></canvas>
+          </div>
         </div>
 
-        <div style="padding: 1.5rem; background-color: var(--bg-page); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📊</div>
-          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">4. BI & Decision Support</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted);">Star Schema CSV exports, production DAX measures library, and Streamlit + Web interfaces for leadership teams.</p>
+        <div class="chart-card col-7">
+          <div class="chart-header">
+            <h2 class="chart-title">Customer Lifetime Dynamics & Benchmarks</h2>
+          </div>
+          <div style="padding: 1rem 0; font-size: 0.95rem; line-height: 1.8;">
+            <p>• <strong>Retention Rate:</strong> <strong>65.27%</strong> of registered buyers placed 2 or more orders (2,828 accounts).</p>
+            <p>• <strong>One-Time Buyers:</strong> 1,505 accounts (34.73%) checked out once.</p>
+            <p>• <strong>Order Cadence:</strong> Mean frequency across registered accounts is <strong>4.25 orders/customer</strong> (maximum individual order count: 206 orders).</p>
+            <p>• <strong>Wholesale Concentration:</strong> The top 100 client accounts contribute over 40% of all customer-attributed revenue.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: RFM & ML CLUSTERS                                                  -->
+    <!-- ========================================================================= -->
+    <div id="tab-rfm" class="tab-content">
+      <div class="callout callout-success">
+        <strong>Pareto Revenue Concentration:</strong> The <strong>Champions</strong> segment (1,119 customers | 25.8% of base) generates <strong>£5,778,845.26</strong> — representing <strong>65.0% of total customer spend</strong>!
+      </div>
+
+      <!-- K-Means Cluster Cards -->
+      <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--secondary); margin-bottom: 1rem;">Machine Learning K-Means Clusters (Evaluated k=4, Silhouette: 0.3015)</h3>
+      <div id="kmeansClusterCards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        Loading clusters...
+      </div>
+
+      <!-- Customer Account Table -->
+      <section style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 class="chart-title">Customer Account Explorer (4,333 Profiles)</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Drill into individual account recency, frequency, spend, and RFM scores.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <input type="text" id="customerSearch" placeholder="Search ID or Country..." style="padding: 0.45rem 0.85rem; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none;">
+            <select id="rfmFilterSelect" class="filter-select">
+              <option value="All">All Segments</option>
+              <option value="Champions">Champions</option>
+              <option value="Loyal Customers">Loyal Customers</option>
+              <option value="Can't Lose Them">Can't Lose Them</option>
+              <option value="At Risk">At Risk</option>
+              <option value="Potential Loyalists">Potential Loyalists</option>
+              <option value="About to Sleep">About to Sleep</option>
+              <option value="Hibernating">Hibernating</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer ID</th>
+                <th>RFM Segment</th>
+                <th>ML Cluster Persona</th>
+                <th>Recency</th>
+                <th>Orders</th>
+                <th>Total Spend</th>
+                <th>Avg Order Value</th>
+                <th>RFM Score</th>
+                <th>Country</th>
+              </tr>
+            </thead>
+            <tbody id="customersTableBody">
+              <tr><td colspan="9" style="text-align: center; padding: 2rem;">Loading customer records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+          <div id="pageInfo">Page 1</div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="prevPageBtn" onclick="changePage(-1)" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">← Previous</button>
+            <button id="nextPageBtn" onclick="changePage(1)" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">Next →</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: BUSINESS STRATEGY                                                  -->
+    <!-- ========================================================================= -->
+    <div id="tab-insights" class="tab-content">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <div class="chart-card">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">1. Product Merchandising Focus</h3>
+          <p style="font-size: 0.92rem; color: var(--text-main); line-height: 1.6;">
+            <strong>Finding:</strong> SKU <code>22423</code> (Regency Cakestand) generates <strong>£174,156.54</strong> across 1,972 orders. SKU <code>85099B</code> (Jumbo Bag) leads velocity with <strong>47,363 units sold</strong>.<br>
+            <strong>Action:</strong> Set automated ERP safety-stock buffers at 4 weeks velocity for top 10 SKUs to prevent out-of-stock events during peak season.
+          </p>
+        </div>
+
+        <div class="chart-card">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--danger); margin-bottom: 0.5rem;">2. Churn Prevention & VIP Win-Back</h3>
+          <p style="font-size: 0.92rem; color: var(--text-main); line-height: 1.6;">
+            <strong>Finding:</strong> <strong>656 high-value accounts</strong> in 'Can't Lose Them' (175) and 'At Risk' (481) previously spent <strong>£810,231.02</strong> but have not ordered in 180+ days.<br>
+            <strong>Action:</strong> Deploy dedicated B2B account managers with bespoke wholesale re-activation credits (£100 on orders over £750).
+          </p>
+        </div>
+
+        <div class="chart-card">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: #d97706; margin-bottom: 0.5rem;">3. Seasonality & Supply Chain</h3>
+          <p style="font-size: 0.92rem; color: var(--text-main); line-height: 1.6;">
+            <strong>Finding:</strong> <strong>November 2011 (£1.45M)</strong> and <strong>October (£1.10M)</strong> represent 25.5% of annual revenue. Slump occurs in February (£508k).<br>
+            <strong>Action:</strong> Front-load warehouse procurement by mid-August to satisfy the wholesale pre-holiday ordering surge.
+          </p>
+        </div>
+
+        <div class="chart-card">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--success); margin-bottom: 0.5rem;">4. High-Value Cohort Strategy</h3>
+          <p style="font-size: 0.92rem; color: var(--text-main); line-height: 1.6;">
+            <strong>Finding:</strong> 1,119 Champions generate <strong>65.0% of customer revenue</strong> (mean spend: £5,164.29).<br>
+            <strong>Action:</strong> Create a formal "Regency VIP" tier with priority fulfillment, first access to new seasonal collections, and dedicated account support.
+          </p>
+        </div>
+
+        <div class="chart-card" style="grid-column: span 2;">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.5rem;">5. Average Order Value (AOV) Expansion</h3>
+          <p style="font-size: 0.92rem; color: var(--text-main); line-height: 1.6;">
+            <strong>Finding:</strong> Mean AOV is <strong>£506.19</strong>, while median basket is <strong>£232.00</strong> due to low-ticket retail carts pulling down efficiency.<br>
+            <strong>Action:</strong> Implement tiered free freight thresholds at <strong>£350</strong> (incentivizing £230 orders to add items) and <strong>£600</strong> for expedited delivery.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Roadmap Table -->
+      <section style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <h2 class="chart-title" style="margin-bottom: 1rem;">Strategic Execution Roadmap</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Phase</th>
+                <th>Initiative</th>
+                <th>Target Metric</th>
+                <th>Team</th>
+                <th>Timeline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>0–30 Days</strong></td>
+                <td>Direct outreach to 175 "Can't Lose Them" accounts</td>
+                <td>Recover £50,000+ lapsed orders</td>
+                <td>Commercial Sales</td>
+                <td>Month 1</td>
+              </tr>
+              <tr>
+                <td><strong>30–60 Days</strong></td>
+                <td>Tiered Free Shipping (£350/£600)</td>
+                <td>+12% Median Basket Lift</td>
+                <td>E-Commerce Ops</td>
+                <td>Month 2</td>
+              </tr>
+              <tr>
+                <td><strong>60–90 Days</strong></td>
+                <td>Automated Safety-Stock Alerts on Hero SKUs</td>
+                <td>0% Stockouts in Peak Q4</td>
+                <td>Merchandising</td>
+                <td>Month 3</td>
+              </tr>
+              <tr>
+                <td><strong>90–180 Days</strong></td>
+                <td>Launch "Regency VIP" Loyalty Program</td>
+                <td>Lift Repeat Rate to 72%</td>
+                <td>Growth Marketing</td>
+                <td>Months 4–6</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 7: POWER BI & DATA MODEL                                              -->
+    <!-- ========================================================================= -->
+    <div id="tab-powerbi" class="tab-content">
+      <div class="callout callout-info">
+        <strong>Kimball Dimensional Model:</strong> All cleaned data is pre-split into 1 central Fact table and 4 Dimension tables, ready for one-click import into Microsoft Power BI Desktop.
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        <div class="kpi-card">
+          <div style="font-weight: 700; color: var(--primary);">FactSales.csv</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0;">522,707 line items with revenue, quantity, price, and DateKey foreign keys.</div>
+          <a href="/download/powerbi/FactSales.csv" class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; text-decoration: none; display: inline-block;">Download CSV 📥</a>
+        </div>
+
+        <div class="kpi-card">
+          <div style="font-weight: 700; color: var(--secondary);">DimCustomer.csv</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0;">4,334 profiles with behavioral RFM scores, segment labels, and K-Means clusters.</div>
+          <a href="/download/powerbi/DimCustomer.csv" class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; text-decoration: none; display: inline-block;">Download CSV 📥</a>
+        </div>
+
+        <div class="kpi-card">
+          <div style="font-weight: 700; color: var(--secondary);">DimProduct.csv</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0;">3,803 unique SKUs mapped to 8 standard commercial merchandise categories.</div>
+          <a href="/download/powerbi/DimProduct.csv" class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; text-decoration: none; display: inline-block;">Download CSV 📥</a>
+        </div>
+
+        <div class="kpi-card">
+          <div style="font-weight: 700; color: var(--secondary);">DimDate.csv</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0;">396 calendar dates spanning 2010–2011 for DAX time-intelligence calculations.</div>
+          <a href="/download/powerbi/DimDate.csv" class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; text-decoration: none; display: inline-block;">Download CSV 📥</a>
+        </div>
+
+        <div class="kpi-card">
+          <div style="font-weight: 700; color: var(--secondary);">DimGeography.csv</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0;">38 countries mapped into UK domestic, Continental Europe, and Rest of World.</div>
+          <a href="/download/powerbi/DimGeography.csv" class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; text-decoration: none; display: inline-block;">Download CSV 📥</a>
         </div>
       </div>
+
+      <section style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <h2 class="chart-title" style="margin-bottom: 1rem;">Production DAX Measures Library (Preview)</h2>
+        <pre style="background-color: #0f172a; color: #f8fafc; padding: 1.25rem; border-radius: var(--radius-sm); font-size: 0.85rem; overflow-x: auto; line-height: 1.5;">
+// 1. Total Gross Revenue
+Total Revenue = SUM(FactSales[Revenue])
+
+// 2. Average Order Value
+Average Order Value = DIVIDE([Total Revenue], DISTINCTCOUNT(FactSales[InvoiceNo]), 0)
+
+// 3. Month-over-Month Revenue Growth (%)
+MoM Revenue Growth Pct = 
+VAR CurrentRevenue = [Total Revenue]
+VAR PriorRevenue = CALCULATE([Total Revenue], PREVIOUSMONTH(DimDate[FullDate]))
+RETURN DIVIDE(CurrentRevenue - PriorRevenue, PriorRevenue, 0)
+
+// 4. Repeat Customer Retention Rate (%)
+Customer Retention Rate = 
+DIVIDE(
+    COUNTROWS(FILTER(VALUES(DimCustomer[CustomerID]), CALCULATE(DISTINCTCOUNT(FactSales[InvoiceNo])) > 1)),
+    CALCULATE(DISTINCTCOUNT(FactSales[CustomerID]), FactSales[CustomerID] <> "GUEST"),
+    0
+)
+        </pre>
+        <div style="margin-top: 1rem;">
+          <a href="/download/report/POWER_BI_DASHBOARD_GUIDE.md" class="btn-primary" style="font-size: 0.9rem; text-decoration: none;">Download Full Power BI Implementation Guide 📄</a>
+        </div>
+      </section>
     </div>
-  </section>
+
+  </main>
 
   <!-- Footer -->
   <footer class="footer">
-    <p>Retail Sales & Customer Analytics Platform | Enterprise Data Science & Business Intelligence Solution</p>
+    <p>Retail Sales & Customer Analytics Platform | Unified Enterprise Decision Suite</p>
   </footer>
 
+  <script src="/static/js/dashboard.js"></script>
 </body>
 </html>

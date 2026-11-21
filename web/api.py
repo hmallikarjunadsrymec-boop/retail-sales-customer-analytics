@@ -1,6 +1,7 @@
 """
-FastAPI Web Application & REST API Server
-Powers the corporate analytics website and the real-time interactive analytics dashboard.
+Unified Retail Analytics Platform & REST API Server
+Integrates the complete corporate portal, 7-view executive analytics dashboard,
+RFM machine learning models, and Power BI data exports into a single unified web platform.
 """
 
 import os
@@ -13,13 +14,15 @@ from fastapi.staticfiles import StaticFiles
 
 DB_PATH = os.path.join("data", "processed", "retail_analytics.db")
 RFM_CSV_PATH = os.path.join("data", "processed", "customer_rfm.csv")
+POWERBI_DIR = os.path.join("data", "processed", "powerbi")
+REPORTS_DIR = "reports"
 TEMPLATES_DIR = os.path.join("web", "templates")
 STATIC_DIR = os.path.join("web", "static")
 
 app = FastAPI(
-    title="Retail Sales & Customer Analytics Web Platform",
-    description="REST API and web interface for retail performance and customer intelligence",
-    version="1.0.0"
+    title="Retail Sales & Customer Analytics Platform",
+    description="Unified Enterprise Analytics Web Platform and REST API",
+    version="2.0.0"
 )
 
 # Mount static files
@@ -33,23 +36,19 @@ def get_db():
 
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_website():
-    """Serves the main corporate landing website."""
+async def serve_unified_app():
+    """Serves the unified Single-Page Web Application & Dashboard."""
     index_file = os.path.join(TEMPLATES_DIR, "index.html")
     if not os.path.exists(index_file):
-        raise HTTPException(status_code=404, detail="Website template not found")
+        raise HTTPException(status_code=404, detail="Unified web template not found")
     with open(index_file, "r", encoding="utf-8") as f:
         return f.read()
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def serve_dashboard():
-    """Serves the interactive web analytics dashboard."""
-    dash_file = os.path.join(TEMPLATES_DIR, "dashboard.html")
-    if not os.path.exists(dash_file):
-        raise HTTPException(status_code=404, detail="Dashboard template not found")
-    with open(dash_file, "r", encoding="utf-8") as f:
-        return f.read()
+async def serve_dashboard_redirect():
+    """Direct route for dashboard bookmarking."""
+    return await serve_unified_app()
 
 
 @app.get("/api/kpis")
@@ -60,7 +59,6 @@ async def get_kpis(country: str = None, category: str = None):
 
     where_clauses = []
     params = []
-
     if country and country != "All":
         where_clauses.append("country = ?")
         params.append(country)
@@ -109,6 +107,7 @@ async def get_kpis(country: str = None, category: str = None):
         "total_units_sold": row["total_units_sold"] or 0,
         "overall_aov": row["overall_aov"] or 0.0,
         "repeat_customers": repeat_cnt,
+        "one_time_customers": total_reg - repeat_cnt,
         "repeat_rate_pct": repeat_rate
     }
 
@@ -158,6 +157,67 @@ async def get_monthly_trend(country: str = None, category: str = None):
     conn.close()
 
     return [dict(r) for r in rows]
+
+
+@app.get("/api/dow-hour")
+async def get_dow_hour_distribution():
+    """Returns day of week and hourly distribution for temporal analysis."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    dow_query = """
+    SELECT day_of_week, COUNT(DISTINCT invoice_no) AS orders, ROUND(SUM(revenue), 2) AS revenue
+    FROM sales_transactions
+    GROUP BY day_of_week;
+    """
+    dow_rows = cursor.execute(dow_query).fetchall()
+
+    hour_query = """
+    SELECT hour, COUNT(DISTINCT invoice_no) AS orders, ROUND(SUM(revenue), 2) AS revenue
+    FROM sales_transactions
+    GROUP BY hour
+    ORDER BY hour ASC;
+    """
+    hour_rows = cursor.execute(hour_query).fetchall()
+    conn.close()
+
+    day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"]
+    dow_dict = {r["day_of_week"]: dict(r) for r in dow_rows}
+    dow_sorted = [dow_dict.get(d, {"day_of_week": d, "orders": 0, "revenue": 0.0}) for d in day_order]
+
+    return {
+        "day_of_week": dow_sorted,
+        "hours": [dict(r) for r in hour_rows]
+    }
+
+
+@app.get("/api/order-distribution")
+async def get_order_distribution():
+    """Returns basket size quartiles and binned distribution."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    query = """
+    WITH invoice_totals AS (
+        SELECT invoice_no, ROUND(SUM(revenue), 2) AS order_total
+        FROM sales_transactions
+        GROUP BY invoice_no
+    )
+    SELECT order_total FROM invoice_totals WHERE order_total BETWEEN 1 AND 2500;
+    """
+    rows = cursor.execute(query).fetchall()
+    conn.close()
+
+    values = [r["order_total"] for r in rows]
+    series = pd.Series(values)
+
+    return {
+        "mean_aov": round(float(series.mean()), 2) if len(series) > 0 else 0,
+        "median_aov": round(float(series.median()), 2) if len(series) > 0 else 0,
+        "p75_aov": round(float(series.quantile(0.75)), 2) if len(series) > 0 else 0,
+        "p95_aov": round(float(series.quantile(0.95)), 2) if len(series) > 0 else 0,
+        "sample_values": values[:500]  # Representative sample for charting
+    }
 
 
 @app.get("/api/top-products")
@@ -351,3 +411,21 @@ async def get_available_filters():
         "countries": ["All"] + countries,
         "categories": ["All"] + categories
     }
+
+
+@app.get("/download/powerbi/{filename}")
+async def download_powerbi_file(filename: str):
+    """Provides downloadable Power BI Star Schema CSV files."""
+    file_path = os.path.join(POWERBI_DIR, filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Power BI file not found")
+    return FileResponse(file_path, media_type="text/csv", filename=filename)
+
+
+@app.get("/download/report/{filename}")
+async def download_report_file(filename: str):
+    """Provides downloadable business insights and implementation guides."""
+    file_path = os.path.join(REPORTS_DIR, filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Report file not found")
+    return FileResponse(file_path, media_type="text/markdown", filename=filename)
