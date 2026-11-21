@@ -1,5 +1,7 @@
 # Retail Sales & Customer Analytics Platform
 
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Production%20Active-brightgreen?logo=vercel&logoColor=white)](https://retail-sales-customer-analytics.vercel.app/)
+[![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-Online-0070F3?logo=chartdotjs&logoColor=white)](https://retail-sales-customer-analytics.vercel.app/dashboard)
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
@@ -13,14 +15,12 @@ An enterprise-grade, end-to-end retail intelligence solution that ingests, clean
 
 ## 🌐 Live Interactive Web Applications
 
-The unified analytics platform is fully deployed and running 24/7 in production on Vercel. **It is 100% self-contained in the cloud and does not require any active local server or external live data stream:**
+The platform features production web applications running directly on Vercel:
 
 | Application Interface | Live Production URL | Technology Stack | Key Capabilities |
 | :--- | :--- | :--- | :--- |
 | **🏢 Corporate Website Portal** | [https://retail-sales-customer-analytics.vercel.app/](https://retail-sales-customer-analytics.vercel.app/) | FastAPI, HTML5, CSS3 | Executive landing portal, end-to-end architecture breakdown, data lineage. |
 | **📊 Executive Web Analytics Dashboard** | [https://retail-sales-customer-analytics.vercel.app/dashboard](https://retail-sales-customer-analytics.vercel.app/dashboard) | FastAPI, SQLite 3, Chart.js | Real-time KPI cards, dynamic Chart.js charts, country/category filters, paginated customer explorer. |
-
-> **Note:** The cloud applications run directly against an embedded cloud SQLite database (522,707 records) hosted on Vercel. All analytics, interactive charts, and customer segment views are fully interactive and accessible at any time without needing a live stream or local computer running.
 
 ### 💻 Running Locally (Optional)
 ```bash
