@@ -11,20 +11,42 @@ An enterprise-grade, end-to-end retail intelligence solution that ingests, clean
 
 ---
 
+## 🌐 Live Interactive Web Applications
+
+The platform features two production web applications running concurrently against the analytical engine:
+
+| Application Interface | Local Access URL | Default Port | Technology Stack | Key Capabilities |
+| :--- | :--- | :--- | :--- | :--- |
+| **🏢 Corporate Website Portal** | [http://localhost:8000/](http://localhost:8000/) | `8000` | FastAPI, HTML5, CSS3 | Executive landing portal, end-to-end architecture breakdown, data lineage. |
+| **📊 Executive Web Analytics Dashboard** | [http://localhost:8000/dashboard](http://localhost:8000/dashboard) | `8000` | FastAPI, SQLite 3, Chart.js | Real-time KPI cards, dynamic Chart.js charts, country/category filters, paginated customer explorer. |
+| **🛍️ Streamlit Analytics Suite** | [http://localhost:8501/](http://localhost:8501/) | `8501` | Streamlit, Altair, Pandas | 6-Page decision platform, date range picker, product search, behavioral RFM drill-downs, CSV exports. |
+
+### How to Launch the Web Interfaces
+```bash
+# Terminal 1: Launch Corporate Portal & Web Dashboard (Port 8000)
+python -m uvicorn web.api:app --host 0.0.0.0 --port 8000
+
+# Terminal 2: Launch Streamlit Analytics Suite (Port 8501)
+streamlit run app.py
+```
+
+---
+
 ## 📋 Table of Contents
 
-1. [Executive Overview](#executive-overview)
-2. [End-to-End System Architecture](#end-to-end-system-architecture)
-3. [Technology Stack](#technology-stack)
-4. [Project Directory Structure](#project-directory-structure)
-5. [Data Lineage & Cleaning Pipeline](#data-lineage--cleaning-pipeline)
-6. [SQL Analytical Queries & Database](#sql-analytical-queries--database)
-7. [Customer RFM Segmentation & Machine Learning](#customer-rfm-segmentation--machine-learning)
-8. [Interactive Streamlit Analytics Application](#interactive-streamlit-analytics-application)
-9. [Power BI Dimensional Modeling & DAX](#power-bi-dimensional-modeling--dax)
-10. [Evidence-Based Business Recommendations](#evidence-based-business-recommendations)
-11. [Installation & Execution Guide](#installation--execution-guide)
-12. [Automated Test Suite & Verification](#automated-test-suite--verification)
+1. [Live Interactive Web Applications](#-live-interactive-web-applications)
+2. [Executive Overview](#executive-overview)
+3. [End-to-End System Architecture](#end-to-end-system-architecture)
+4. [Technology Stack](#technology-stack)
+5. [Project Directory Structure](#project-directory-structure)
+6. [Data Lineage & Cleaning Pipeline](#data-lineage--cleaning-pipeline)
+7. [SQL Analytical Queries & Database](#sql-analytical-queries--database)
+8. [Customer RFM Segmentation & Machine Learning](#customer-rfm-segmentation--machine-learning)
+9. [Web Dashboards & Streamlit Suite](#web-dashboards--streamlit-suite)
+10. [Power BI Dimensional Modeling & DAX](#power-bi-dimensional-modeling--dax)
+11. [Evidence-Based Business Recommendations](#evidence-based-business-recommendations)
+12. [Installation & Execution Guide](#installation--execution-guide)
+13. [Automated Test Suite & Verification](#automated-test-suite--verification)
 
 ---
 
